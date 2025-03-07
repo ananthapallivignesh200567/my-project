@@ -18,6 +18,11 @@ const port = process.env.PORT || 5000;
     credentials:true
  }))
 
+ //all routes
+ const authRoutes=require("./src/users/user.route")
+
+ app.use("/api/auth",authRoutes)
+
 main().then(()=>console.log("mongo db is successfully connected")).catch(err => console.log(err));
 //Vignesh
 //vigneshananthapalli67
