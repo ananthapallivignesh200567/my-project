@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CartModel from '../pages/shop/CartModel';
+import avatarImg from "../assets/avatar.png"
+import { useLogoutUserMutation } from '../Redux/features/auth/authapi';
+import { logout } from '../Redux/features/auth/authSlice';
 const Navbar = () => {
     const products=useSelector((state)=>state.cart.products);
     const [isCartOpen,setIsCartOpen]=useState(false);
@@ -11,7 +14,43 @@ const Navbar = () => {
     //show user is logged in
     const dispatch=useDispatch()
     const {user}=useSelector((state)=>state.auth)
+    const [logoutUser]=useLogoutUserMutation()
+    const navigate=useNavigate()
     
+    //dropdowns menu
+    const [isDropDownOpen,setIsDropDownOpen]=useState(false)
+    const handleDropDownToggle=()=>{
+        setIsDropDownOpen(!isDropDownOpen)
+    }
+
+    //admin dropdown menus
+    const adminDropDownMenus=[
+        {label:"dashboard",path:"/dashboard/admin"},
+        {label:"manage Items",path:"/dashboard/manage-products"},
+        {label:"All Orders",path:"/dashboard/manage-orders"},
+        {label:"Add New Post",path:"/dashboard/add-new-post"},
+    ]
+
+    //user dropdown menu
+    const userDropDownMenus=[
+        {label:"dashboard",path:"/dashboard"},
+        {label:"profile",path:"/dashboard/profile"},
+        {label:"Payments",path:"/dashboard/payments"},
+        {label:"Orders",path:"/dashboard/orders"},
+    ]
+    const dropDownMenus=user?.role==='admin'?[...adminDropDownMenus]:[...userDropDownMenus]
+
+    const handleLogout=async()=>{
+        try {
+            await logoutUser().unwrap()
+            dispatch(logout())
+            navigate("/")
+        } catch (error) {
+            console.error("failed to logout",error)
+        }
+
+    }
+
 
   return (
     <header className='fixed-nav-bar w-nav'>
@@ -45,7 +84,20 @@ const Navbar = () => {
                 <span>
                     {
                         user && user ?(<>
-                            <img src={profil}/>
+                            <img onClick={handleDropDownToggle} src={user?.profileImage || avatarImg} className='size-6 rounded-full cursor-pointer'/>{
+                                isDropDownOpen && (
+                                    <div className='!absolute !right-0 !mt-3 !p-4 !w-48 bg-white border !border-gray-200 !rounded-lg !shadow-lg !z-50'>
+                                        <ul className='font-medium !space-y-4 !p-2'>
+                                            {dropDownMenus.map((menu,index)=>(
+                                                <li key={index}>
+                                                    <Link className='dropdown-items' onClick={()=>setIsDropDownOpen(false)} to={menu.path}>{menu.label}</Link>
+                                                </li>
+                                            ))}
+                                            <li><Link onClick={handleLogout} className='dropdown-items'>Logout</Link></li>
+                                        </ul>
+                                    </div>
+                                )
+                            }
                         </>):(<Link to="login">
                         <i className="ri-user-line"></i>
                         </Link>)

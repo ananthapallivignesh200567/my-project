@@ -6,6 +6,7 @@ const authApi=createApi({
         baseUrl:`${getBaseUrl()}/api/auth`,
         credentials:'include',
     }),
+    tagTypes:["User"],
     endpoints:(builder)=>({
         registerUser:builder.mutation({
             query:(newUser)=>({
@@ -57,7 +58,7 @@ const authApi=createApi({
                 method:"PUT",
                 body:profile
             })
-        })
+        }),
     })
 })
 
