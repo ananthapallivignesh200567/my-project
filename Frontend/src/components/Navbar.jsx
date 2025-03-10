@@ -45,7 +45,7 @@ const Navbar = () => {
                 <span>
                     {
                         user && user ?(<>
-                            <img src={}/>
+                            <img src={profil}/>
                         </>):(<Link to="login">
                         <i className="ri-user-line"></i>
                         </Link>)
