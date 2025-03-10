@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import CartModel from '../pages/shop/CartModel';
 const Navbar = () => {
@@ -8,6 +8,11 @@ const Navbar = () => {
     const handleCartToggle=()=>{
         setIsCartOpen(!isCartOpen)
     }
+    //show user is logged in
+    const dispatch=useDispatch()
+    const {user}=useSelector((state)=>state.auth)
+    
+
   return (
     <header className='fixed-nav-bar w-nav'>
         <nav className='max-w-screen-2xl mx-auto px-4 flex justify-between items-center'>
@@ -38,9 +43,14 @@ const Navbar = () => {
                 </span>
                 
                 <span>
-                    <Link to="login">
-                    <i className="ri-user-line"></i>
-                    </Link>
+                    {
+                        user && user ?(<>
+                            <img src={}/>
+                        </>):(<Link to="login">
+                        <i className="ri-user-line"></i>
+                        </Link>)
+                    }
+                    
                 </span>
             </div>
         </nav>

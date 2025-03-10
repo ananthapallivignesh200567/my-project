@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useRegisterUserMutation } from '../Redux/features/auth/authapi'
 
 
 const Register = () => {
@@ -7,21 +8,30 @@ const Register = () => {
     const [email,setEmail]=useState('')
     const [userName,setUserName]=useState('')
     const [password,setPassword]=useState('')
+    const [registerUser,{isLoading}]=useRegisterUserMutation()
+    const navigate=useNavigate()
     const handleRegister= async(e)=>{
         e.preventDefault();
         const data={
-            userName,
+            username: userName,
             email,
             password
         }
-        console.log(data)
+       
+        try {
+            await registerUser(data).unwrap()
+            alert("registration successful")
+            navigate('/login')
+        } catch (error) {
+            setMessage("regiatration failed")
+        }
     }
   return (
     <section className='h-screen flex items-center justify-center'>
         <div className='max-w-sm border shadow bg-white mx-auto !p-8'>
             <h2 className='text-2xl font-semibold !pt-5'>please Register</h2>
             <form onSubmit={handleRegister} className='space-y-5 max-w-sm mx-auto !pt-8'>
-                <input onChange={(e)=>setUserNamve(e.target.value)} type="text" name="username" id="username"
+                <input onChange={(e)=>setUserName(e.target.value)} type="text" name="username" id="username"
                 placeholder="username" required className='w-full bg-gray-100 focus:outline-none !px-5 !py-3 !mb-3'/>
                 <input onChange={(e)=>setEmail(e.target.value)} type="email" name="email" id="email"
                 placeholder="Email Address" required className='w-full bg-gray-100 focus:outline-none !px-5 !py-3 !mb-3'/>

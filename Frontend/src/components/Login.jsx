@@ -1,17 +1,33 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Link, data, useNavigate } from 'react-router-dom'
+import { useLoginUserMutation } from '../Redux/features/auth/authapi'
+import { setUser } from '../Redux/features/auth/authSlice'
 
 const Login = () => {
     const [message,setMessage]=useState('')
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
+    const dispatch=useDispatch()
+    const [loginUser,{isLoading:loginLoading}]=useLoginUserMutation()
+    const navigate=useNavigate()
     const handleLogin= async(e)=>{
         e.preventDefault();
         const data={
             email,
             password
         }
+        try {
+            const response=await loginUser(data).unwrap()
+            const {token,user}=response
+            dispatch(setUser(user))
+            alert("login successful")
+            navigate('/')
+        } catch (error) {
+            setMessage("please provide valid email,password")
+        }
     }
+    
   return (
     <section className='h-screen flex items-center justify-center'>
         <div className='max-w-sm border shadow bg-white mx-auto !p-8'>
